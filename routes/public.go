@@ -1,7 +1,6 @@
 package routes
 
 import (
-	regispage "sample/RegisPage"
 	loginpage "sample/loginPage"
 	"sample/web"
 
@@ -14,7 +13,7 @@ func SetupRoutes(app *fiber.App) {
 	v1Endpoint := apiEndpoint.Group("/v1")
 
 	v1Endpoint.Post("/log", loginpage.LoginPage)         //Login
-	v1Endpoint.Post("/register", regispage.Registration) //Registration
+	v1Endpoint.Post("/register", loginpage.Registration) //Registration
 
 	// MONITOR
 	monitorEndpoint := v1Endpoint.Group("/monitor")
@@ -26,4 +25,5 @@ func SetupRoutes(app *fiber.App) {
 	// WEB
 	webEnpoint := v1Endpoint.Group("/web")
 	webEnpoint.Get("/show-login", web.ShowLogin)
+	webEnpoint.Get("/show-register", web.ShowRegister)
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"sample/db"
+	"sample/models"
 	"sample/routes"
 	"time"
 
@@ -11,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -39,18 +42,34 @@ func main() {
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization", // Specify allowed headers
 	}))
 
+	// .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Logger middleware with custom format and time format
 	app.Use(logger.New(logger.Config{
 		Format:     "${cyan}${time} ${white}| ${green}${status} ${white}| ${ip} | ${host} | ${method} | ${magenta}${path} ${white}| ${red}${latency} ${white}\n",
 		TimeFormat: "01/02/2006 3:04 PM",
 	}))
 
+	// Database connection
+	err = db.ConnectDB()
+	if err != nil {
+		log.Fatalf("Error connecting to the database %v", err)
+	}
+
+	// Auto-migrate models
+	db.Database.AutoMigrate(&models.Registration{})
+
 	// Setup routes - Ensure this function is properly defined and routes are correctly set up
 	routes.SetupRoutes(app)
 
-	// Start server on port 1000
-	err := app.Listen(":1000")
+	// Start server
+	err = app.Listen(":1000")
 	if err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		log.Fatal("Error starting the server")
 	}
+
 }
