@@ -4,11 +4,18 @@ import (
 	loginpage "sample/loginPage"
 	"sample/web"
 
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 )
 
 func SetupRoutes(app *fiber.App) {
+
+	// PROMETHEUS
+	prometheus := fiberprometheus.New("fiber_app")
+	prometheus.RegisterAt(app, "/metrics")
+	app.Use(prometheus.Middleware)
+
 	apiEndpoint := app.Group("/api")
 	v1Endpoint := apiEndpoint.Group("/v1")
 
