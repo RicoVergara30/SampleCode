@@ -64,7 +64,7 @@ func HashPassword(password string) (string, error) {
 // ================================================================================
 
 // eto yung sa pag magllogin kana.
-func HashAndComparePassword(storedPassword string, providedPassword string) error {
+func CompareHashAndPassword(storedPassword string, providedPassword string) error {
 	// Compare stored password with user input password
 	if err := bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(providedPassword)); err != nil {
 		// Passwords don't match

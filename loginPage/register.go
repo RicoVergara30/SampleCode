@@ -16,7 +16,7 @@ func Registration(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-
+	//Encypt
 	hashedPassword, err := db.HashPassword((register.Password))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
