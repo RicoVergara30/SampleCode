@@ -21,7 +21,7 @@ func SetupRoutes(app *fiber.App) {
 
 	v1Endpoint.Post("/log", loginpage.LoginPage)         //Login
 	v1Endpoint.Post("/register", loginpage.Registration) //Registration
-
+	v1Endpoint.Post("/Ftransaction", loginpage.FtransactionHandler)
 	// MONITOR
 	monitorEndpoint := v1Endpoint.Group("/monitor")
 	monitorEndpoint.Get("/", monitor.New(monitor.Config{

@@ -8,7 +8,6 @@ require (
 	github.com/gofiber/template/html/v2 v2.1.2
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.25.0
-	golang.org/x/exp v0.0.0-20240707233637-46b078467d37
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
 )
