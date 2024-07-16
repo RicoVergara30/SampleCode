@@ -67,7 +67,7 @@ func main() {
 	routes.SetupRoutes(app)
 
 	// Start server
-	err = app.Listen(":1000")
+	err = app.Listen(":2000")
 	if err != nil {
 		log.Fatal("Error starting the server")
 	}
