@@ -2,6 +2,7 @@ package routes
 
 import (
 	loginpage "sample/loginPage"
+	"sample/transfer"
 	"sample/web"
 
 	"github.com/ansrivas/fiberprometheus/v2"
@@ -21,8 +22,8 @@ func SetupRoutes(app *fiber.App) {
 
 	v1Endpoint.Post("/log", loginpage.LoginPage)         //Login
 	v1Endpoint.Post("/register", loginpage.Registration) //Registration
-	v1Endpoint.Post("/Ftransaction", loginpage.TransferAccount)
-	v1Endpoint.Post("/Ftransactions", loginpage.FtransactionHandler)
+	v1Endpoint.Post("/Ftransaction", transfer.ProcessCreditTransfer)
+
 	// MONITOR
 	monitorEndpoint := v1Endpoint.Group("/monitor")
 	monitorEndpoint.Get("/", monitor.New(monitor.Config{

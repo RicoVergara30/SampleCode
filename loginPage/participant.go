@@ -97,7 +97,7 @@ func TransferAccount(c *fiber.Ctx) error {
 	// Simulate sending request to FtransactionHandler
 	// Assuming FtransactionHandler is implemented elsewhere
 	c.Request().SetBody(transferRequestBody)
-	FtransactionHandler(c)
+
 	time.Sleep(time.Second * 1)
 
 	finalResponse, err := GetFinalResponse(trans.InstructionId)
@@ -106,7 +106,6 @@ func TransferAccount(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	FtransactionHandler(c)
 
 	// Will loop until the response code is not "NONE"
 	if finalResponse.ReasonCode == "NONE" && (finalResponse.Status == "FAILED" || finalResponse.Status == "FAILED-RJCT") {
