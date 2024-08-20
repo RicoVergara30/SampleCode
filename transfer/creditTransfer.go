@@ -117,7 +117,7 @@ func CallbackFunction(c *fiber.Ctx, status, instructionId, process, rsnCode stri
 	log.Println("Start Callback Function")
 	var reference CallBack
 
-	db.Database.Raw("SELECT reference_id FROM rbi_instapay.ct_transaction WHERE instruction_id = ? ", instructionId).Scan(&reference.ReferenceId)
+	db.Database.Raw("SELECT reference_id FROM public.transactions WHERE instruction_id = ? ", instructionId).Scan(&reference.ReferenceId)
 
 	if status == "RJCT" || rsnCode != "" {
 		reference.Status = "FAILED"
@@ -175,11 +175,11 @@ func CallbackFunction(c *fiber.Ctx, status, instructionId, process, rsnCode stri
 func CompleteRequestTransaction(c *fiber.Ctx, instructionID string) (bool, error) {
 	fmt.Println("Start Transfer Credit - Receving")
 	transactCredit := &payload.TransactCredit{}
-	db.Database.Raw("SELECT * FROM rbi_instapay.ct_transaction WHERE instruction_id = ?", instructionID).Scan(transactCredit)
+	db.Database.Raw("SELECT * FROM public.transactions WHERE instruction_id = ?", instructionID).Scan(transactCredit)
 
 	// Fetch settlement account and decrypt the data
 	settlementAccount := &webtool.SettlementAccount{}
-	db.Database.Debug().Raw("SELECT account_number FROM rbi_instapay.settlement WHERE event = 'receiving'").Scan(settlementAccount)
+	db.Database.Debug().Raw("SELECT account_number FROM public.settlements WHERE event = 'receiving'").Scan(settlementAccount)
 	decryptedAccountNumber, _ := encryptDecrypt.Decrypt(settlementAccount.AccountNumber, envrouting.Environment)
 	amount, _ := strconv.ParseFloat(transactCredit.Amount, 64)
 
@@ -252,19 +252,6 @@ func CompleteRequestTransaction(c *fiber.Ctx, instructionID string) (bool, error
 	return true, nil
 }
 
-//	@Tags			IPS
-//
-// GetInstructionID godoc
-//
-//	@Summary		Get Instruction by Reference ID
-//	@Description	Get an instruction by its reference ID
-//	@ID				get-GetInstructionID
-//	@Produce		json
-//	@Param			ReferenceId	body		CallBack	true	"Reference ID"
-//	@Success		200			{object}	CTRequest
-//	@Failure		400			{string}	string	"Bad Request"
-//	@Failure		500			{string}	string	"Internal Server Error"
-//	@Router			/get-instructionID [post]
 func GetInstructionID(c *fiber.Ctx) error {
 	request := &CallBack{}
 	if parsErr := c.BodyParser(request); parsErr != nil {
@@ -272,7 +259,7 @@ func GetInstructionID(c *fiber.Ctx) error {
 	}
 
 	instructionID := &CTRequest{}
-	if dbErr := db.Database.Debug().Raw("select * from rbi_instapay.ct_transaction where reference_id=? ", request.ReferenceId).Scan(instructionID).Error; dbErr != nil {
+	if dbErr := db.Database.Debug().Raw("SELECT * FROM public.transactions where reference_id=? ", request.ReferenceId).Scan(instructionID).Error; dbErr != nil {
 		return c.SendString(dbErr.Error())
 	}
 	return c.JSON(fiber.Map{

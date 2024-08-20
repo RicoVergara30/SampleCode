@@ -2,12 +2,14 @@ package loginpage
 
 import (
 	"sample/db"
+	"sample/middleware/jwttoken"
 	"sample/models"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func LoginPage(c *fiber.Ctx) error {
+func LoginPages(c *fiber.Ctx) error {
 	log := &models.LoginPage{}
 
 	if err := c.BodyParser(&log); err != nil {
@@ -33,8 +35,31 @@ func LoginPage(c *fiber.Ctx) error {
 	}
 	log.Password = string(UnhashedPassword)
 
+	// Generate token with 3-second expiration
+	tokenString, err := jwttoken.GenerateTokens(user.Username, 3*time.Second)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "could not generate token",
+			"details": err.Error(),
+		})
+	}
+
+	response := &models.ResponseLogin{
+		Username: user.Username,
+		Password: user.Password,
+		Status:   true,
+		Token:    tokenString,
+	}
+	if err := db.Database.Debug().Exec("INSERT INTO public.login(username, password, status, token) VALUES (?, ?, ?, ?)", log.Username, log.Password, response.Status, response.Token).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"details": err.Error(),
+		})
+
+	}
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
+		"token":   tokenString,
 		"details": "200",
 	})
 }

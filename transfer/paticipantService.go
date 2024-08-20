@@ -257,6 +257,6 @@ func ProcessCreditTransfer(c *fiber.Ctx) error {
 
 func GetFinalReponseK2C(instructionId string) *payload.ResponseCreditTransfer {
 	creditTransferResponse := &payload.ResponseCreditTransfer{}
-	db.Database.Raw("SELECT transaction_type, status, reason_code, local_instrument, instruction_id, reference_id, sender_bic, sender_name, sender_account, currency, amount, receiving_bic, receiving_name, receiving_account, application FROM public.ct_transaction WHERE instruction_id = ?", instructionId).Scan(creditTransferResponse)
+	db.Database.Raw("SELECT transaction_type, status, reason_code, local_instrument, instruction_id, reference_id, sender_bic, sender_name, sender_account, currency, amount, receiving_bic, receiving_name, receiving_account, application FROM public.transactions WHERE instruction_id = ?", instructionId).Scan(creditTransferResponse)
 	return creditTransferResponse
 }
