@@ -38,3 +38,5 @@ func Registration(c *fiber.Ctx) error {
 		"details": "200",
 	})
 }
+
+//add

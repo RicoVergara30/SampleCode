@@ -2,7 +2,6 @@ package routes
 
 import (
 	loginpage "sample/loginPage"
-	"sample/middleware/jwttoken"
 	"sample/transfer"
 	"sample/web"
 
@@ -21,9 +20,10 @@ func SetupRoutes(app *fiber.App) {
 	v1Endpoint := apiEndpoint.Group("/v1")
 
 	app.Use(prometheus.Middleware)
-	v1Endpoint.Post("/log", loginpage.LoginPages) //Login
-	app.Use(jwttoken.TokenAuthMiddleware)
+
 	v1Endpoint.Post("/register", loginpage.Registration) //Registration
+	v1Endpoint.Post("/log", loginpage.LoginPages)        //Login
+	// app.Use(jwttoken.TokenAuthMiddleware)
 	v1Endpoint.Post("/Ftransaction", transfer.ProcessCreditTransfer)
 
 	// MONITOR

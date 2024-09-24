@@ -80,7 +80,6 @@ func ValidateToken(tokenString string) (jwt.MapClaims, error) {
 	return claims, nil
 }
 
-// TokenAuthMiddleware is a middleware for authenticating JWT tokens.
 func TokenAuthMiddleware(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {

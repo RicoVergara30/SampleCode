@@ -50,14 +50,18 @@ func LoginPages(c *fiber.Ctx) error {
 		Status:   true,
 		Token:    tokenString,
 	}
-	if err := db.Database.Debug().Exec("INSERT INTO public.login(username, password, status, token) VALUES (?, ?, ?, ?)", log.Username, log.Password, response.Status, response.Token).Error; err != nil {
+	if err := db.Database.Raw("SELECT username, password, status, token FROM public.login WHERE username = ? AND password = ?", log.Username, log.Password).Scan(&response).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"details": err.Error(),
 		})
-
 	}
+	// if err := db.Database.Debug().Exec("INSERT INTO public.login(username, password, status, token) VALUES (?, ?, ?, ?)", log.Username, log.Password, response.Status, response.Token).Error; err != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"details": err.Error(),
+	// 	})
+	// }
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	return c.JSON(fiber.Map{
 		"message": "Login successful",
 		"token":   tokenString,
 		"details": "200",
